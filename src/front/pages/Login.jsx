@@ -7,15 +7,17 @@ export const Login = () => {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
+    console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL); // 👈 AÑADE ESTA LÍNEA
 
-        const data = await response.json();
+    const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
 
         if (response.ok) {
             sessionStorage.setItem("token", data.token);

@@ -6,7 +6,9 @@ from api.models import db, User
 from api.utils import APIException
 
 api = Blueprint('api', __name__)
-CORS(api)
+
+# 🔧 IMPORTANTE: aquí se permite acceso al frontend con CORS
+CORS(api, origins="https://redesigned-dollop-g4r6g49xwp7vcp996-5173.app.github.dev", supports_credentials=True)
 
 @api.route('/hello', methods=['GET', 'POST'])
 def handle_hello():
