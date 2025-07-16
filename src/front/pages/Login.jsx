@@ -7,33 +7,67 @@ export const Login = () => {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL); // 👈 AÑADE ESTA LÍNEA
+        try {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
 
-    const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
+            if (!response.ok) {
+                throw new Error("Login failed");
+            }
 
-    const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok) {
+            
             sessionStorage.setItem("token", data.token);
+
+            
+            console.log("Token recibido y guardado:", sessionStorage.getItem("token"));
+
+            
             navigate("/private");
-        } else {
-            alert(data.msg || "Credenciales inválidas");
+        } catch (error) {
+            console.error("Error en login:", error);
+            alert("Login incorrecto");
         }
     };
 
     return (
         <div className="container mt-5">
-            <h2>Iniciar sesión</h2>
+            <h2>Iniciar Sesión</h2>
             <form onSubmit={handleLogin}>
-                <input type="email" className="form-control my-2" placeholder="Email" onChange={e => setEmail(e.target.value)} required />
-                <input type="password" className="form-control my-2" placeholder="Contraseña" onChange={e => setPassword(e.target.value)} required />
-                <button className="btn btn-success mt-2" type="submit">Entrar</button>
+                <div className="mb-3">
+                    <label htmlFor="email" className="form-label">Email</label>
+                    <input 
+                        type="email" 
+                        className="form-control" 
+                        id="email" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)} 
+                        required 
+                    />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="password" className="form-label">Contraseña</label>
+                    <input 
+                        type="password" 
+                        className="form-control" 
+                        id="password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)} 
+                        required 
+                    />
+                </div>
+                <button type="submit" className="btn btn-primary">Entrar</button>
             </form>
         </div>
     );

@@ -1,14 +1,13 @@
-from flask import request, jsonify, Blueprint
-from flask_cors import CORS
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
-from api.utils import APIException
+from api.utils import generate_sitemap, APIException
+from flask_cors import CORS
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 api = Blueprint('api', __name__)
 
-# 🔧 IMPORTANTE: aquí se permite acceso al frontend con CORS
-CORS(api, origins="https://redesigned-dollop-g4r6g49xwp7vcp996-5173.app.github.dev", supports_credentials=True)
+
+CORS(api, origins="*", supports_credentials=True)
 
 @api.route('/hello', methods=['GET', 'POST'])
 def handle_hello():
@@ -47,7 +46,8 @@ def login():
     if not user:
         return jsonify({"msg": "Bad credentials"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    
+    access_token = create_access_token(identity=str(user.id))
     return jsonify({ "token": access_token }), 200
 
 @api.route('/private', methods=['GET'])
